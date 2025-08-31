@@ -68,18 +68,13 @@ class ProseSummaryQuestion(BaseQuestion):
     answer: List[str] = Field(description="A list containing the 3 correct answer texts.", min_items=3, max_items=3)
 
 
-# 6. 최종 'QuestionSet' 모델: 모든 질문 유형을 포함하는 "스마트" 리스트
-# Discriminated Union: 'question_type' 필드의 값에 따라 Pydantic이 자동으로
-# StandardQuestion, SentenceSimplificationQuestion 등을 구분하여 처리합니다.
 AnyQuestion = Union[
     StandardQuestion,
     SentenceSimplificationQuestion,
     InsertTextQuestion,
     ProseSummaryQuestion,
 ]
-
 class BaseQuestionSet(BaseModel):
-    question_type: str = Field(description="The type of question (e.g., 'Main Idea', 'Vocabulary', 'Inference')")
-    question: str = Field(description="The question about the given passage_examples")
-    options: List[str] = Field(description="A list of 4 multiple-choice options")
-    answer: str = Field(description="The text of the correct answer from the 4 options")
+    questions: List[AnyQuestion] = Field(
+        discriminator="question_type"
+    )
