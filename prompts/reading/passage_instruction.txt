@@ -1,0 +1,42 @@
+1. Passage Generation Goals
+    * Randomly select topics from the following categories.
+        - Life and Environment
+        - Earth and Space
+        - Civilization and Exchange
+        - Social Change and Revolution
+        - Human Behavior and Psychology
+        - Social Structure and Function
+        - Arts and Expression
+        - Literature and Thought
+        - Science, Technology and Society
+        - Environmental Issues and Sustainability
+
+2. Passage Quality Control and Assessment
+    * Target Quality Metrics
+        - Passage length (650-750 words)
+        - Readability (target Flesch-Kincaid Grade Level 10-12)
+        - Vocabulary distribution
+            1) Aim for a vocabulary distribution where approximately 8-12% are C1-C2 level words, 8-12 are field-specific terms (defined clearly in context), and the remainder are largely B1-B2 level academic words.
+            2) Include at least 10% Academic Word List (AWL) vocabulary within the passage.
+        - Lexical diversity (target a Type-Token Ratio between $0.45 and $0.55)
+        - Grammatical accuracy (zero errors)
+        - Academic logic and internal consistency
+        - Act as a university-level history textbook author
+
+3. Revision Trigger
+    - Flagging Condition
+        1) A passage should be flagged for revision if it significantly deviates from the quality metrics defined in section 2a.
+
+    - Examples of deviation include
+        1) Falling outside the target word count (650-750 words) or readability range (Flesch-Kincaid Grade Level 10-12).
+        2) Having an inappropriate vocabulary density or distribution (as per section 1c).
+        3) Containing logical flaws or internal contradictions.
+
+    - Review Cycle
+        1) A systematic content review will be conducted according to one of the following schedules:
+        2) Periodic Review: After every 10 passages are generated.
+        3) Ad-hoc Review: Upon receiving specific external feedback that necessitates changes.
+    - Instruction Source: Specific instructions for any revision will be provided externally.
+
+4. Requirements
+    * Do not generate Question and Answer
