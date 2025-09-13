@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Literal, Union
+from typing import List, Literal, Union, Annotated
 from pydantic import BaseModel, Field
 
 
@@ -75,6 +75,6 @@ AnyQuestion = Union[
     ProseSummaryQuestion,
 ]
 class BaseQuestionSet(BaseModel):
-    questions: List[AnyQuestion] = Field(
-        discriminator="question_type"
-    )
+    questions: List[
+        Annotated[AnyQuestion, Field(discriminator="question_type")]
+    ]
