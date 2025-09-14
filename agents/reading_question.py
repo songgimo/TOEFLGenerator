@@ -41,24 +41,19 @@ class ReadingQuestionAgent(BaseAgent[str, BaseQuestionSet]):
         print("✅ Questions generated successfully.")
         return question_set
 
-    # --- 내부 헬퍼 메서드들 ---
-
     def _create_few_shot_prompt(self) -> FewShotPromptTemplate:
         """Few-Shot 프롬프트 템플릿을 생성합니다."""
         examples = self._load_examples("prompts/reading/question_examples")
 
         example_prompt = PromptTemplate(
-            template="Passage:\n{passage}\n\nJSON Output:\n{output}",
+            template="Passage:\n{{passage}}\n\nJSON Output:\n{{output}}",
             input_variables=["passage", "output"],
+            template_format='jinja2',
         )
 
         prefix = self._read_file("prompts/reading/question_instruction.txt")
-        prefix = prefix.replace(
-            "{format_instructions}",
-            self.parser.get_format_instructions()
-        )
 
-        suffix = "Passage:\n{passage}\n\nJSON Output:"
+        suffix = "Passage:\n{{passage}}\n\nJSON Output:"
 
         return FewShotPromptTemplate(
             examples=examples,
@@ -66,6 +61,10 @@ class ReadingQuestionAgent(BaseAgent[str, BaseQuestionSet]):
             prefix=prefix,
             suffix=suffix,
             input_variables=["passage"],
+            partial_variables={
+                "format_instructions": self.parser.get_format_instructions()
+            },
+            template_format='jinja2',
             example_separator="\n\n---\n\n"
         )
 

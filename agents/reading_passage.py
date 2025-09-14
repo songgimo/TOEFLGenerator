@@ -67,7 +67,7 @@ class ReadingPassageAgent(BaseAgent[str, str]):
                     example = {
                         "topic": self._read_file(os.path.join(full_dir_path, "topic.txt")),
                         "thought_process": self._read_file(os.path.join(full_dir_path, "thought_process.txt")),
-                        "output_passage": self._read_file(os.path.join(full_dir_path, "output_passage.txt")),
+                        "output": self._read_file(os.path.join(full_dir_path, "output.txt")),
                     }
                     examples.append(example)
                 except FileNotFoundError as e:
