@@ -1,0 +1,23 @@
+Your task is to analyze a given "Passage" and its corresponding "JSON Output" (a set of questions) to generate a plausible, step-by-step "Thought Process" that a human expert would have followed to create those questions.
+
+The "Thought Process" should explain the logic behind question creation, including:
+1.  **Deconstructing the Goal:** What is the overall objective?
+2.  **Passage Analysis:** Which parts of the passage are good materials for which question types?
+3.  **Step-by-Step Question Generation:** How was each specific question (Q1, Q2, etc.) conceived and what was the reasoning for the correct answer and distractors?
+4.  **Final Assembly:** A concluding thought about assembling the final JSON object.
+
+Based on the provided inputs, generate ONLY the "Thought Process" text.
+
+---
+
+**[Passage]**
+{passage}
+
+---
+
+**[JSON Output]**
+{json_output}
+
+---
+
+**[Thought Process]**

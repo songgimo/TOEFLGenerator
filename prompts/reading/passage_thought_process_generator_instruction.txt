@@ -1,0 +1,29 @@
+You are an expert prompt engineer and a university-level history textbook author.
+Your task is to analyze a given "Topic" and the resulting "Final Passage" to generate a plausible, step-by-step "Thought Process" that a human author would have followed to write that passage.
+
+The "Thought Process" should explain the logic behind the passage's structure and content, including:
+1.  **Deconstruct the Topic & Goal:** What is the main subject and the narrative goal of the passage?
+2.  **Outline the Passage Structure:** A paragraph-by-paragraph plan explaining the role of each section.
+3.  **Identify Key Vocabulary & Narrative Elements:** A list of essential academic terms and concepts woven into the text.
+
+Based on the provided inputs, generate ONLY the "Thought Process" text.
+
+---
+
+**[Topic]**
+{topic}
+
+---
+
+**[Final Passage]**
+{final_passage}
+
+---
+
+**[Thought Process]**
+
+
+
+
+
+
