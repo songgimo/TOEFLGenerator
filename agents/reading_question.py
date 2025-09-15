@@ -1,6 +1,6 @@
 import os
 from langchain_core.prompts import PromptTemplate, FewShotPromptTemplate
-from langchain_core.output_parsers import JsonOutputParser
+from langchain_core.output_parsers import JsonOutputParser, PydanticOutputParser
 
 from .base import BaseAgent
 from llm_client import GoogleLLMClient
@@ -18,7 +18,7 @@ class ReadingQuestionAgent(BaseAgent[str, BaseQuestionSet]):
             model_name=GeminiModel.GEMINI_2_5_FLASH,
             temperature=0.7,
         )
-        self.parser = JsonOutputParser(pydantic_object=BaseQuestionSet)
+        self.parser = PydanticOutputParser(pydantic_object=BaseQuestionSet)
         self.prompt_template = self._create_few_shot_prompt()
 
     def run(self, passage: str) -> BaseQuestionSet:
