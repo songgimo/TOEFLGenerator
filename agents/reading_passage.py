@@ -13,8 +13,7 @@ class ReadingPassageAgent(BaseAgent[str, str]):
     def _initialize_agent(self):
         """프롬프트 템플릿과 LLM 클라이언트를 초기화합니다."""
         self.llm_client = GoogleLLMClient(
-            model_name=GeminiModel.GEMINI_2_5_FLASH,
-            temperature=0.7
+            model_name=GeminiModel.GEMINI_2_5_FLASH, temperature=0.7
         )
         self.prompt_template = self._create_few_shot_prompt()
 
@@ -54,7 +53,7 @@ class ReadingPassageAgent(BaseAgent[str, str]):
             prefix=prefix,
             suffix=suffix,
             input_variables=["topic"],
-            example_separator="\n\n---\n\n"
+            example_separator="\n\n---\n\n",
         )
 
     def _load_examples(self, examples_path: str) -> list[dict]:
@@ -65,13 +64,21 @@ class ReadingPassageAgent(BaseAgent[str, str]):
             if os.path.isdir(full_dir_path):
                 try:
                     example = {
-                        "topic": self._read_file(os.path.join(full_dir_path, "topic.txt")),
-                        "thought_process": self._read_file(os.path.join(full_dir_path, "thought_process.txt")),
-                        "output": self._read_file(os.path.join(full_dir_path, "output.txt")),
+                        "topic": self._read_file(
+                            os.path.join(full_dir_path, "topic.txt")
+                        ),
+                        "thought_process": self._read_file(
+                            os.path.join(full_dir_path, "thought_process.txt")
+                        ),
+                        "output": self._read_file(
+                            os.path.join(full_dir_path, "output.txt")
+                        ),
                     }
                     examples.append(example)
                 except FileNotFoundError as e:
-                    print(f"Warning: Skipping directory {example_dir} because a required file is missing: {e}")
+                    print(
+                        f"Warning: Skipping directory {example_dir} because a required file is missing: {e}"
+                    )
 
         print(f"✅ Loaded {len(examples)} few-shot passage_examples.")
         return examples
@@ -81,4 +88,6 @@ class ReadingPassageAgent(BaseAgent[str, str]):
             with open(path, "r", encoding="utf-8") as f:
                 return f.read()
         except FileNotFoundError:
-            raise FileNotFoundError(f"Cannot find a prompt file. Path is invalid: {path}")
+            raise FileNotFoundError(
+                f"Cannot find a prompt file. Path is invalid: {path}"
+            )

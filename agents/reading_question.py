@@ -48,7 +48,7 @@ class ReadingQuestionAgent(BaseAgent[str, BaseQuestionSet]):
         example_prompt = PromptTemplate(
             template="Passage:\n{{passage}}\n\nJSON Output:\n{{output}}",
             input_variables=["passage", "output"],
-            template_format='jinja2',
+            template_format="jinja2",
         )
 
         prefix = self._read_file("prompts/reading/question_instruction.txt")
@@ -64,8 +64,8 @@ class ReadingQuestionAgent(BaseAgent[str, BaseQuestionSet]):
             partial_variables={
                 "format_instructions": self.parser.get_format_instructions()
             },
-            template_format='jinja2',
-            example_separator="\n\n---\n\n"
+            template_format="jinja2",
+            example_separator="\n\n---\n\n",
         )
 
     def _load_examples(self, examples_path: str) -> list[dict]:
@@ -75,14 +75,20 @@ class ReadingQuestionAgent(BaseAgent[str, BaseQuestionSet]):
             full_dir_path = os.path.join(examples_path, example_dir)
             if os.path.isdir(full_dir_path):
                 try:
-                    output_json_str = self._read_file(os.path.join(full_dir_path, "output.json"))
+                    output_json_str = self._read_file(
+                        os.path.join(full_dir_path, "output.json")
+                    )
                     example = {
-                        "passage": self._read_file(os.path.join(full_dir_path, "input_passage.txt")),
+                        "passage": self._read_file(
+                            os.path.join(full_dir_path, "input_passage.txt")
+                        ),
                         "output": output_json_str,
                     }
                     examples.append(example)
                 except FileNotFoundError as e:
-                    print(f"Warning: Skipping directory {example_dir} because a required file is missing: {e}")
+                    print(
+                        f"Warning: Skipping directory {example_dir} because a required file is missing: {e}"
+                    )
         print(f"✅ Loaded {len(examples)} few-shot question examples.")
         return examples
 

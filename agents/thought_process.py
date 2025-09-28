@@ -35,11 +35,12 @@ class QuestionThoughtProcessAgent(BaseAgent[dict, str]):
         json_output = inputs.get("json_output")
 
         if not passage or not json_output:
-            raise ValueError("Inputs dictionary must contain 'passage' and 'json_output' keys.")
+            raise ValueError(
+                "Inputs dictionary must contain 'passage' and 'json_output' keys."
+            )
 
         final_prompt = self.prompt_template.format(
-            passage=passage,
-            json_output=json_output
+            passage=passage, json_output=json_output
         )
 
         thought_process = self.llm_client.invoke(final_prompt)
@@ -50,7 +51,11 @@ class QuestionThoughtProcessAgent(BaseAgent[dict, str]):
         """사고 과정 생성을 위한 프롬프트 템플릿을 로드합니다."""
         try:
             # 이전에 만들었던 프롬프트 파일을 사용합니다.
-            with open("prompts/reading/question_thought_process_instruction.txt", "r", encoding="utf-8") as f:
+            with open(
+                "prompts/reading/question_thought_process_instruction.txt",
+                "r",
+                encoding="utf-8",
+            ) as f:
                 prompt_text = f.read()
 
             return PromptTemplate(
@@ -91,11 +96,12 @@ class PassageThoughtProcessAgent(BaseAgent[dict, str]):
         final_passage = inputs.get("final_passage")
 
         if not topic or not final_passage:
-            raise ValueError("Inputs dictionary must contain 'topic' and 'final_passage' keys.")
+            raise ValueError(
+                "Inputs dictionary must contain 'topic' and 'final_passage' keys."
+            )
 
         final_prompt = self.prompt_template.format(
-            topic=topic,
-            final_passage=final_passage
+            topic=topic, final_passage=final_passage
         )
 
         thought_process = self.llm_client.invoke(final_prompt)
@@ -106,7 +112,11 @@ class PassageThoughtProcessAgent(BaseAgent[dict, str]):
         """사고 과정 생성을 위한 프롬프트 템플릿을 로드합니다."""
         try:
             # 우리가 방금 이야기한 instruction 파일을 사용합니다.
-            with open("prompts/reading/passage_thought_process_instruction.txt", "r", encoding="utf-8") as f:
+            with open(
+                "prompts/reading/passage_thought_process_instruction.txt",
+                "r",
+                encoding="utf-8",
+            ) as f:
                 prompt_text = f.read()
 
             return PromptTemplate(

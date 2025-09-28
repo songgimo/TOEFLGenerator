@@ -2,8 +2,9 @@ from abc import ABC, abstractmethod
 from typing import TypeVar, Generic
 
 # 제네릭 타입을 위한 TypeVar 정의
-InputType = TypeVar('InputType')
-OutputType = TypeVar('OutputType')
+InputType = TypeVar("InputType")
+OutputType = TypeVar("OutputType")
+
 
 class BaseAgent(ABC, Generic[InputType, OutputType]):
     """
