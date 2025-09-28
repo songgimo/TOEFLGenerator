@@ -142,7 +142,5 @@ class OverallSummary(BaseModel):
 
 
 class EvaluationResult(BaseModel):
-    """The complete evaluation result for a generated TOEFL task."""
-
     evaluation_scores: EvaluationScores
     overall_summary: OverallSummary

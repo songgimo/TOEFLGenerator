@@ -1,58 +1,87 @@
 import streamlit as st
 from agents.reading_passage import ReadingPassageAgent
 from agents.reading_question import ReadingQuestionAgent
-from config import BaseQuestionSet
+# Add new imports
+from agents.quality_assurance import QualityAssuranceAgent
+from config import BaseQuestionSet, EvaluationResult
 from typing import Tuple
 
 
 @st.cache_resource
-def load_agents() -> Tuple[ReadingPassageAgent, ReadingQuestionAgent]:
-    """
-    ReadingPassageAgent와 ReadingQuestionAgent를 초기화하고 캐시합니다.
-    Streamlit의 cache_resource를 사용하여 앱 실행 동안 에이전트가 한 번만 로드되도록 합니다.
-    """
+def load_agents() -> Tuple[ReadingPassageAgent, ReadingQuestionAgent, QualityAssuranceAgent]:
+    """에이전트들을 초기화하고 캐시합니다."""
     print("--- 에이전트 초기화 중 ---")
     passage_agent = ReadingPassageAgent()
     question_agent = ReadingQuestionAgent()
+    qa_agent = QualityAssuranceAgent()
     print("--- ✅ 에이전트 초기화 완료 ---")
-    return passage_agent, question_agent
+    return passage_agent, question_agent, qa_agent
 
 
 def initialize_session_state():
-    """
-    Streamlit 세션 상태를 초기화합니다.
-    """
+    """Streamlit 세션 상태를 초기화합니다."""
     if 'task_generated' not in st.session_state:
         st.session_state.task_generated = False
         st.session_state.passage = ""
         st.session_state.questions_set = None
+        st.session_state.evaluation_result = None  # 평가 결과 상태 추가
 
 
-def generate_task_and_update_state(topic: str, passage_agent: ReadingPassageAgent,
-                                   question_agent: ReadingQuestionAgent):
-    """
-    주어진 토픽으로 TOEFL Reading 지문과 질문을 생성하고 세션 상태를 업데이트합니다.
-    """
+def generate_task_and_update_state(topic: str, passage_agent: ReadingPassageAgent, question_agent: ReadingQuestionAgent,
+                                   qa_agent: QualityAssuranceAgent):
+    """지문, 질문 생성 후 품질 평가를 수행하고 세션 상태를 업데이트합니다."""
     display_topic = topic if topic and topic.strip().lower() != 'random' else "a randomly generated academic topic"
 
-    with st.spinner(f"🔥 '{display_topic}'에 대한 TOEFL Reading Task 생성 중... 잠시만 기다려주세요."):
+    with st.spinner(f"🔥 '{display_topic}'에 대한 TOEFL Task 생성 및 평가 중..."):
         try:
+            # 1. 지문 및 질문 생성
             passage = passage_agent.run(display_topic)
             questions_set = question_agent.run(passage)
 
+            # 2. 품질 평가 수행
+            eval_inputs = {"passage": passage, "questions_set": questions_set}
+            evaluation_result = qa_agent.run(eval_inputs)
+
+            # 3. 세션 상태 업데이트
             st.session_state.passage = passage
             st.session_state.questions_set = questions_set
+            st.session_state.evaluation_result = evaluation_result
             st.session_state.task_generated = True
-            st.success("🎉 TOEFL Reading Task 생성이 완료되었습니다!")
+            st.success("🎉 TOEFL Task 생성 및 평가가 완료되었습니다!")
         except Exception as e:
             st.error(f"오류가 발생했습니다: {e}")
             st.session_state.task_generated = False
 
 
+def display_evaluation_interface(result: EvaluationResult):
+    """품질 평가 결과를 Streamlit 인터페이스에 표시합니다."""
+    st.divider()
+    st.header("🤖 AI Quality Assurance Report")
+
+    summary = result.overall_summary
+    if summary.final_decision == "Pass":
+        st.success(f"**Final Decision: {summary.final_decision}**")
+    else:
+        st.error(f"**Final Decision: {summary.final_decision}**")
+
+    st.markdown(f"**Justification:** {summary.justification}")
+
+    with st.expander("Show Detailed Scores"):
+        col1, col2 = st.columns(2)
+        with col1:
+            st.subheader("Passage Quality")
+            for key, value in result.evaluation_scores.passage_quality.model_dump().items():
+                st.metric(label=key.replace('_', ' ').title(), value=f"{value['score']}/5")
+
+        with col2:
+            st.subheader("Question Set Quality")
+            for key, value in result.evaluation_scores.question_set_quality.model_dump().items():
+                st.metric(label=key.replace('_', ' ').title(), value=f"{value['score']}/5")
+
+
 def display_task_interface(passage: str, questions_set: BaseQuestionSet):
-    """
-    생성된 지문, 질문 및 정답을 Streamlit 인터페이스에 표시합니다.
-    """
+    """생성된 지문, 질문 및 정답을 Streamlit 인터페이스에 표시합니다."""
+    # ... (기존 display_task_interface 함수 내용은 변경 없음)
     st.divider()
     st.header("📖 Reading Passage")
     st.markdown(passage)
@@ -62,22 +91,19 @@ def display_task_interface(passage: str, questions_set: BaseQuestionSet):
     if questions_set:
         for i, q in enumerate(questions_set.questions):
             with st.expander(f"**Question {i + 1}: {q.question_type}**", expanded=False):
+                # ... (내부 로직 변경 없음)
                 if q.question_type == "Sentence Simplification":
                     st.markdown(f"**Original Sentence:** \"_{q.highlighted_sentence}_\"")
                 elif q.question_type == "Insert Text":
                     st.markdown(f"**Sentence to Insert:** \"_{q.sentence_to_insert}_\"")
-
                 st.markdown(q.question)
-
-                # Prose Summary는 여러 개를 선택해야 하므로 multiselect를 사용하고, 나머지는 radio를 사용합니다.
-                if q.question_type == "Prose Summary":
-                    st.multiselect("Select your answers:", q.options, key=f"q_{i}")
-                else:
-                    st.radio("Select your answer:", q.options, key=f"q_{i}", label_visibility="collapsed")
+                options = [opt for opt in q.options]
+                user_choice = st.radio("Select your answer:", options, key=f"q_{i}", label_visibility="collapsed")
 
     st.divider()
 
     if st.checkbox("Show Answer Key", key="show_answers"):
+        # ... (내부 로직 변경 없음)
         st.header("🔑 Answer Key")
         if questions_set:
             for i, q in enumerate(questions_set.questions):
@@ -86,28 +112,26 @@ def display_task_interface(passage: str, questions_set: BaseQuestionSet):
 
 
 def main():
-    """
-    Streamlit을 사용하여 TOEFL Reading 문제를 생성하고 표시하는 메인 웹 앱 함수
-    """
+    """메인 웹 앱 함수"""
     st.set_page_config(page_title="TOEFL Reading Task Generator", layout="wide")
     st.title("📚 TOEFL Reading Task Generator")
 
-    # 세션 상태 및 에이전트 초기화
     initialize_session_state()
-    passage_agent, question_agent = load_agents()
+    passage_agent, question_agent, qa_agent = load_agents()
 
-    # 사용자 입력 UI
     topic = st.text_input(
         "Enter an academic topic for the Reading passage (or leave blank for random):",
         key="topic_input"
     )
 
-    # 문제 생성 버튼
-    if st.button("Generate Task", key="generate_button"):
-        generate_task_and_update_state(topic, passage_agent, question_agent)
+    if st.button("Generate & Evaluate Task", key="generate_button"):
+        generate_task_and_update_state(topic, passage_agent, question_agent, qa_agent)
 
-    # 생성된 결과 표시
     if st.session_state.task_generated:
+        # 평가 결과를 먼저 보여줍니다.
+        if st.session_state.evaluation_result:
+            display_evaluation_interface(st.session_state.evaluation_result)
+
         display_task_interface(st.session_state.passage, st.session_state.questions_set)
 
 
