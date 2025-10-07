@@ -43,10 +43,8 @@ class ReadingPassageAgent(BaseAgent[str, str]):
 
         prefix = self._read_file("prompts/reading/passage_instruction.txt")
 
-        # 4. 전체 프롬프트의 끝 부분 (접미사) - 실제 사용자 입력 부분
         suffix = "Topic:\n{topic}\n\nThought Process:"
 
-        # 5. 모든 요소를 조합하여 최종 프롬프트 템플릿 생성
         return FewShotPromptTemplate(
             examples=examples,
             example_prompt=example_prompt,

@@ -50,7 +50,6 @@ class QuestionThoughtProcessAgent(BaseAgent[dict, str]):
     def _load_prompt_template(self) -> PromptTemplate:
         """사고 과정 생성을 위한 프롬프트 템플릿을 로드합니다."""
         try:
-            # 이전에 만들었던 프롬프트 파일을 사용합니다.
             with open(
                 "prompts/reading/question_thought_process_instruction.txt",
                 "r",
@@ -111,7 +110,6 @@ class PassageThoughtProcessAgent(BaseAgent[dict, str]):
     def _load_prompt_template(self) -> PromptTemplate:
         """사고 과정 생성을 위한 프롬프트 템플릿을 로드합니다."""
         try:
-            # 우리가 방금 이야기한 instruction 파일을 사용합니다.
             with open(
                 "prompts/reading/passage_thought_process_instruction.txt",
                 "r",
