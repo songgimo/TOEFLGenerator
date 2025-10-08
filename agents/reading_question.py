@@ -91,11 +91,3 @@ class ReadingQuestionAgent(BaseAgent[str, BaseQuestionSet]):
                     )
         print(f"✅ Loaded {len(examples)} few-shot question examples.")
         return examples
-
-    def _read_file(self, path: str) -> str:
-        """파일을 읽어 문자열로 반환하는 유틸리티 함수"""
-        try:
-            with open(path, "r", encoding="utf-8") as f:
-                return f.read()
-        except FileNotFoundError:
-            raise FileNotFoundError(f"Cannot find a file. Path is invalid: {path}")

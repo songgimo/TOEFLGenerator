@@ -16,10 +16,9 @@ class QualityAssuranceAgent(BaseAgent[dict, EvaluationResult]):
         """Initializes the LLM client, parser, and prompt template for evaluation."""
         self.llm_client = GoogleLLMClient(
             model_name=GeminiModel.GEMINI_2_5_FLASH,
-            temperature=0.2  # Lower temperature for more consistent evaluation
+            temperature=0.2
         )
         self.parser = PydanticOutputParser(pydantic_object=EvaluationResult)
-        # Load the English prompt you provided earlier
         with open("prompts/reading/quality_assurance_instruction.txt", "r", encoding="utf-8") as f:
             prompt_text = f.read()
 
@@ -47,7 +46,6 @@ class QualityAssuranceAgent(BaseAgent[dict, EvaluationResult]):
         if not passage or not questions_set:
             raise ValueError("Inputs must contain 'passage' and 'questions_set'.")
 
-        # Convert the Pydantic questions_set object back to a JSON string for the prompt
         questions_json_str = questions_set.model_dump_json(indent=2)
 
         final_prompt = self.prompt_template.format(

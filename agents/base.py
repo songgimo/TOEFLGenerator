@@ -1,16 +1,12 @@
 from abc import ABC, abstractmethod
 from typing import TypeVar, Generic
+import os
 
-# 제네릭 타입을 위한 TypeVar 정의
 InputType = TypeVar("InputType")
 OutputType = TypeVar("OutputType")
 
 
 class BaseAgent(ABC, Generic[InputType, OutputType]):
-    """
-    This class is base class for other agent classes
-    """
-
     def __init__(self):
         """Initial common methods, such as LLM client."""
         print(f"Initializing {self.__class__.__name__}...")
@@ -19,18 +15,37 @@ class BaseAgent(ABC, Generic[InputType, OutputType]):
 
     @abstractmethod
     def _initialize_agent(self):
-        """
-        This is abstract methods to load initial logic, such as prompt loading and etc.
-        It must be implemented in the subclass.
-        """
         pass
 
     @abstractmethod
     def run(self, inputs: InputType) -> OutputType:
-        """
-
-        모든 에이전트의 메인 실행 메서드입니다.
-        입력을 받아 출력을 반환하는 공통 인터페이스 역할을 합니다.
-        하위 클래스에서 반드시 구현해야 합니다.
-        """
         pass
+
+    def _read_file(self, path: str) -> str:
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                return f.read()
+        except FileNotFoundError:
+            raise FileNotFoundError(
+                f"Cannot find a prompt file. Path is invalid: {path}"
+            )
+
+    def _load_examples(self, examples_path: str) -> list[dict]:
+        examples = []
+        print(f"Loading examples from: {examples_path}")
+        for example_dir in sorted(os.listdir(examples_path)):
+            full_dir_path = os.path.join(examples_path, example_dir)
+
+            if os.path.isdir(full_dir_path):
+                try:
+                    example = {
+                        "topic": self._read_file(os.path.join(full_dir_path, "topic.txt")),
+                        "thought_process": self._read_file(os.path.join(full_dir_path, "thought_process.txt")),
+                        "output": self._read_file(os.path.join(full_dir_path, "output.txt")),
+                    }
+                    examples.append(example)
+                except FileNotFoundError as e:
+                    print(f"Warning: Skipping directory {example_dir} because a required file is missing: {e}")
+
+        print(f"✅ Loaded {len(examples)} few-shot examples.")
+        return examples
