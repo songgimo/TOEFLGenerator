@@ -3,7 +3,6 @@ from langchain_core.output_parsers import PydanticOutputParser
 from agents.base import BaseAgent
 from llm_client import GoogleLLMClient
 from config import GeminiModel, BaseQuestionSet, EvaluationResult
-import json
 
 
 class QualityAssuranceAgent(BaseAgent[dict, EvaluationResult]):

@@ -21,32 +21,22 @@ In conclusion, social change and revolution are not mere historical footnotes bu
 
 
 def test_reading_question_agent():
-    """
-    ReadingQuestionAgent의 run 메서드가 정상적으로 작동하는지 테스트합니다.
-    """
     print("--- Starting Test for ReadingQuestionAgent ---")
 
     try:
-        # 1. 에이전트 초기화
         agent = ReadingQuestionAgent()
 
-        # 2. 에이전트 실행
-        # BaseAgent 추상화 덕분에 .run() 메서드를 호출하면 됩니다.
         result = agent.run(SAMPLE_PASSAGE)
 
-        # 3. 결과 검증 (Assertions)
         print("\n✅ Agent executed successfully. Now verifying output...")
 
-        # 3-1. 반환 타입이 BaseQuestionSet 인스턴스인지 확인
         assert isinstance(result,
                           BaseQuestionSet), f"FAIL: Output type should be BaseQuestionSet, but got {type(result)}"
         print("PASS: Output type is correct (BaseQuestionSet).")
 
-        # 3-2. 생성된 질문의 개수가 10개인지 확인
         assert len(result.questions) == 10, f"FAIL: Expected 10 questions, but got {len(result.questions)}"
         print(f"PASS: Correct number of questions generated ({len(result.questions)}/10).")
 
-        # 3-3. 각 질문에 question_type, question, options, answer 필드가 모두 있는지 확인
         for i, q in enumerate(result.questions):
             assert hasattr(q, 'question_type'), f"FAIL: Question {i} is missing 'question_type'"
             assert hasattr(q, 'question'), f"FAIL: Question {i} is missing 'question'"
@@ -57,9 +47,8 @@ def test_reading_question_agent():
         print("\n--- Test Summary ---")
         print("🎉 All assertions passed! The agent is working as expected.")
 
-        # 4. 생성된 내용 일부 출력 (시각적 확인용)
         print("\n--- Sample of Generated Questions ---")
-        for i, q in enumerate(result.questions[:2]):  # 처음 2개 질문만 출력
+        for i, q in enumerate(result.questions[:2]):
             print(f"\n[Question {i + 1}]")
             print(f"  Type: {q.question_type}")
             print(f"  Question: {q.question}")
@@ -73,6 +62,5 @@ def test_reading_question_agent():
         traceback.print_exc()
 
 
-# 이 파일이 직접 실행될 때만 테스트 함수를 호출합니다.
 if __name__ == '__main__':
     test_reading_question_agent()

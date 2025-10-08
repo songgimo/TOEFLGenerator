@@ -8,7 +8,6 @@ OutputType = TypeVar("OutputType")
 
 class BaseAgent(ABC, Generic[InputType, OutputType]):
     def __init__(self):
-        """Initial common methods, such as LLM client."""
         print(f"Initializing {self.__class__.__name__}...")
         self._initialize_agent()
         print(f"✅ {self.__class__.__name__} initialized.")

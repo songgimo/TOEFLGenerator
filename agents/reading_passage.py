@@ -1,6 +1,5 @@
-import os
 from langchain_core.prompts import PromptTemplate, FewShotPromptTemplate
-from .base import BaseAgent  # BaseAgent 임포트
+from .base import BaseAgent
 from llm_client import GoogleLLMClient
 from config import GeminiModel
 

@@ -1,4 +1,3 @@
-import os
 from langchain_core.prompts import PromptTemplate, FewShotPromptTemplate
 from .base import BaseAgent
 from llm_client import GoogleLLMClient

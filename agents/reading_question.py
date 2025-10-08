@@ -8,12 +8,8 @@ from config import GeminiModel, BaseQuestionSet
 
 
 class ReadingQuestionAgent(BaseAgent[str, BaseQuestionSet]):
-    """
-    주어진 지문(str)에 대한 TOEFL 질문 세트(BaseQuestionSet)를 생성하는 에이전트입니다.
-    """
 
     def _initialize_agent(self):
-        """질문 생성을 위한 LLM 클라이언트, 파서, 프롬프트 템플릿을 초기화합니다."""
         self.llm_client = GoogleLLMClient(
             model_name=GeminiModel.GEMINI_2_5_FLASH,
             temperature=0.7,
@@ -22,15 +18,6 @@ class ReadingQuestionAgent(BaseAgent[str, BaseQuestionSet]):
         self.prompt_template = self._create_few_shot_prompt()
 
     def run(self, passage: str) -> BaseQuestionSet:
-        """
-        지문을 입력받아 구조화된 질문 세트를 생성하고 반환합니다.
-
-        Args:
-            passage (str): 질문을 생성할 기반이 되는 TOEFL 지문.
-
-        Returns:
-            BaseQuestionSet: 생성된 질문들이 담긴 Pydantic 모델 객체.
-        """
         print("\n▶️ Generating questions for the passage...")
 
         final_prompt = self.prompt_template.format(passage=passage)
@@ -42,7 +29,6 @@ class ReadingQuestionAgent(BaseAgent[str, BaseQuestionSet]):
         return question_set
 
     def _create_few_shot_prompt(self) -> FewShotPromptTemplate:
-        """Few-Shot 프롬프트 템플릿을 생성합니다."""
         examples = self._load_examples("prompts/reading/question_examples")
 
         example_prompt = PromptTemplate(
@@ -69,7 +55,6 @@ class ReadingQuestionAgent(BaseAgent[str, BaseQuestionSet]):
         )
 
     def _load_examples(self, examples_path: str) -> list[dict]:
-        """질문 생성 예제를 로드합니다."""
         examples = []
         for example_dir in sorted(os.listdir(examples_path)):
             full_dir_path = os.path.join(examples_path, example_dir)
