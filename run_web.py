@@ -9,7 +9,6 @@ from typing import Tuple
 
 @st.cache_resource
 def load_agents() -> Tuple[ReadingPassageAgent, ReadingQuestionAgent, QualityAssuranceAgent]:
-    """에이전트들을 초기화하고 캐시합니다."""
     print("--- 에이전트 초기화 중 ---")
     passage_agent = ReadingPassageAgent()
     question_agent = ReadingQuestionAgent()
@@ -19,30 +18,25 @@ def load_agents() -> Tuple[ReadingPassageAgent, ReadingQuestionAgent, QualityAss
 
 
 def initialize_session_state():
-    """Streamlit 세션 상태를 초기화합니다."""
     if 'task_generated' not in st.session_state:
         st.session_state.task_generated = False
         st.session_state.passage = ""
         st.session_state.questions_set = None
-        st.session_state.evaluation_result = None  # 평가 결과 상태 추가
+        st.session_state.evaluation_result = None
 
 
 def generate_task_and_update_state(topic: str, passage_agent: ReadingPassageAgent, question_agent: ReadingQuestionAgent,
                                    qa_agent: QualityAssuranceAgent):
-    """지문, 질문 생성 후 품질 평가를 수행하고 세션 상태를 업데이트합니다."""
     display_topic = topic if topic and topic.strip().lower() != 'random' else "a randomly generated academic topic"
 
     with st.spinner(f"🔥 '{display_topic}'에 대한 TOEFL Task 생성 및 평가 중..."):
         try:
-            # 1. 지문 및 질문 생성
             passage = passage_agent.run(display_topic)
             questions_set = question_agent.run(passage)
 
-            # 2. 품질 평가 수행
             eval_inputs = {"passage": passage, "questions_set": questions_set}
             evaluation_result = qa_agent.run(eval_inputs)
 
-            # 3. 세션 상태 업데이트
             st.session_state.passage = passage
             st.session_state.questions_set = questions_set
             st.session_state.evaluation_result = evaluation_result
@@ -54,7 +48,6 @@ def generate_task_and_update_state(topic: str, passage_agent: ReadingPassageAgen
 
 
 def display_evaluation_interface(result: EvaluationResult):
-    """품질 평가 결과를 Streamlit 인터페이스에 표시합니다."""
     st.divider()
     st.header("🤖 AI Quality Assurance Report")
 
@@ -80,8 +73,6 @@ def display_evaluation_interface(result: EvaluationResult):
 
 
 def display_task_interface(passage: str, questions_set: BaseQuestionSet):
-    """생성된 지문, 질문 및 정답을 Streamlit 인터페이스에 표시합니다."""
-    # ... (기존 display_task_interface 함수 내용은 변경 없음)
     st.divider()
     st.header("📖 Reading Passage")
     st.markdown(passage)
@@ -112,7 +103,6 @@ def display_task_interface(passage: str, questions_set: BaseQuestionSet):
 
 
 def main():
-    """메인 웹 앱 함수"""
     st.set_page_config(page_title="TOEFL Reading Task Generator", layout="wide")
     st.title("📚 TOEFL Reading Task Generator")
 
@@ -128,7 +118,6 @@ def main():
         generate_task_and_update_state(topic, passage_agent, question_agent, qa_agent)
 
     if st.session_state.task_generated:
-        # 평가 결과를 먼저 보여줍니다.
         if st.session_state.evaluation_result:
             display_evaluation_interface(st.session_state.evaluation_result)
 

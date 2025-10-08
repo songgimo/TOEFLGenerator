@@ -7,14 +7,12 @@ from config import BaseQuestionSet, EvaluationResult
 
 
 def get_user_topic() -> str:
-    """사용자로부터 읽기 지문의 주제를 입력받습니다."""
     topic = input("Enter an academic topic for the Reading passage (or 'random'): ")
     return topic if topic and topic.lower() != 'random' else "a randomly generated academic topic"
 
 
 def generate_task(passage_agent: ReadingPassageAgent, question_agent: ReadingQuestionAgent, topic: str) -> tuple[
     str, BaseQuestionSet]:
-    """주어진 주제에 대해 TOEFL Reading 지문과 질문을 생성합니다."""
     print(f"\n🔥 '{topic}' 주제로 TOEFL Reading Task 생성을 시작합니다...")
     generated_passage = passage_agent.run(topic)
     generated_questions_set = question_agent.run(generated_passage)
@@ -23,8 +21,6 @@ def generate_task(passage_agent: ReadingPassageAgent, question_agent: ReadingQue
 
 
 def display_results(passage: str, questions_set: BaseQuestionSet):
-    """생성된 지문, 질문 및 정답을 콘솔에 출력합니다."""
-    # ... (기존 display_results 함수 내용은 변경 없음)
     print("=" * 50)
     print("\n📖 Reading Passage\n")
     print(passage)
@@ -45,7 +41,6 @@ def display_results(passage: str, questions_set: BaseQuestionSet):
 
 
 def display_evaluation_results(result: EvaluationResult):
-    """품질 평가 결과를 콘솔에 보기 좋게 출력합니다."""
     print("\n" + "=" * 50)
     print("🤖 AI Quality Assurance Report")
     print("=" * 50)
@@ -67,21 +62,19 @@ def display_evaluation_results(result: EvaluationResult):
 
 
 def run_reading_task():
-    """TOEFL Reading 문제 생성 및 평가 전체 과정을 처리합니다."""
     try:
         passage_agent = ReadingPassageAgent()
         question_agent = ReadingQuestionAgent()
-        qa_agent = QualityAssuranceAgent()  # QA 에이전트 초기화
+        qa_agent = QualityAssuranceAgent()
 
         topic = get_user_topic()
         passage, questions_set = generate_task(passage_agent, question_agent, topic)
 
-        # 생성된 결과로 품질 평가 실행
         evaluation_input = {"passage": passage, "questions_set": questions_set}
         evaluation_result = qa_agent.run(evaluation_input)
 
         display_results(passage, questions_set)
-        display_evaluation_results(evaluation_result)  # 평가 결과 출력
+        display_evaluation_results(evaluation_result)
 
     except Exception as ex:
         print(f"\n🚨 Reading task 중 오류가 발생했습니다: {ex}")
@@ -89,8 +82,6 @@ def run_reading_task():
 
 
 def main():
-    """TOEFL 문제 생성 CLI를 실행하는 메인 함수"""
-    # ... (기존 main 함수 내용은 변경 없음)
     while True:
         print("\n" + "=" * 50)
         print("📚 Welcome to the TOEFL Task Generator 😈")

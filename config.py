@@ -4,10 +4,6 @@ from pydantic import BaseModel, Field
 
 
 class GeminiModel(Enum):
-    """
-    An enumeration for Google Gemini model names
-    """
-
     GEMINI_2_5_FLASH = "gemini-2.5-flash"
     GEMINI_2_5_PRO = "gemini-2.5-pro"
 
@@ -16,8 +12,6 @@ class GeminiModel(Enum):
 
 
 class BaseQuestion(BaseModel):
-    """모든 질문 모델이 상속받는 기본 클래스입니다."""
-
     question_type: str = Field(
         description="The type of question (e.g., 'Main Idea', 'Vocabulary', 'Inference')"
     )
@@ -27,9 +21,6 @@ class BaseQuestion(BaseModel):
 
 
 class StandardQuestion(BaseQuestion):
-    """하나의 질문, 4개의 선택지, 하나의 정답을 갖는 표준 질문 모델입니다."""
-
-    # 'question_type'을 특정 값들로 제한하여 데이터의 정확성을 보장합니다.
     question_type: Literal[
         "Factual Information",
         "Negative Factual Information",
@@ -44,7 +35,6 @@ class StandardQuestion(BaseQuestion):
     answer: str = Field(description="The single correct answer text from the options.")
 
 
-# 3. 'Sentence Simplification' 전용 모델
 class SentenceSimplificationQuestion(BaseQuestion):
     question_type: Literal["Sentence Simplification"]
     highlighted_sentence: str = Field(
@@ -60,7 +50,6 @@ class SentenceSimplificationQuestion(BaseQuestion):
     answer: str = Field(description="The text of the correct simplified sentence.")
 
 
-# 4. 'Insert Text' 전용 모델
 class InsertTextQuestion(BaseQuestion):
     question_type: Literal["Insert Text"]
     sentence_to_insert: str = Field(
@@ -77,7 +66,6 @@ class InsertTextQuestion(BaseQuestion):
     )
 
 
-# 5. 'Prose Summary' 전용 모델
 class ProseSummaryQuestion(BaseQuestion):
     question_type: Literal["Prose Summary"]
     introductory_sentence: str = Field(
